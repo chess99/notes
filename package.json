@@ -1,0 +1,20 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "description": "## 说明",
+  "main": "catalogGenerator.js",
+  "scripts": {
+    "build": "node catalogGenerator.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chess99/notes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chess99/notes/issues"
+  },
+  "homepage": "https://github.com/chess99/notes#readme"
+}

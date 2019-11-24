@@ -133,7 +133,7 @@ function nChar(char, n = 1) {
   return Array.from({ length: n }, x => char).join('')
 }
 
-function catalogTotal() {
+function catalogTotal(folderTreeData) {
   let resultLines = []
   resultLines.push(`## 目录`, null)
   function _catalogRecursive(folderTreeData, headingLevel = 2) {
@@ -151,7 +151,7 @@ function catalogTotal() {
       _catalogRecursive(folderNode.subFolders, nextHeadingLevel)
     }
   }
-  _catalogRecursive(treeResult.treeData)
+  _catalogRecursive(folderTreeData)
   return resultLines
 }
 
@@ -178,7 +178,7 @@ for (folerNode of folderList) {
   }
 }
 
-const catalogTotalLines = catalogTotal()
+const catalogTotalLines = catalogTotal(treeResult.treeData)
 fs.writeFileSync(CATALOG_FILE_NAME, catalogTotalLines.join('\n'))
 concatReadme(catalogTotalLines)
 
