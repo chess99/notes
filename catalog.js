@@ -190,7 +190,7 @@ function moveFileToDeployFolder() {
   function shouldMove(pathName) {
     if (pathName[0] === '.') return false
     if (pathName === DEPLOY_FOLDER) return false
-    if (/\.js(?:on)?$/.test(pathName)) return false
+    // if (/\.js(?:on)?$/.test(pathName)) return false
     return true
   }
 
