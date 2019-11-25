@@ -3,13 +3,23 @@ const path = require('path');
 
 const CATALOG_FILE_NAME = 'CATALOG.md'
 
+console.log('process.env.CI', process.env.CI);
+
+function pathJoin(...paths) {
+  return paths.join('/')
+}
+
+function escapeMarkdownLinkText(text) {
+  return text.replace(/([$])/g, `\\$1`)
+}
+
 function parseFolder(rootPath) {
   let currLevelFolders = [];
   let currLevelFiles = [];
 
   const foldersAndFiles = fs.readdirSync(rootPath);
   for (let item of foldersAndFiles) {
-    const itemFullPath = path.join(rootPath, item);
+    const itemFullPath = pathJoin(rootPath, item);
     const stat = fs.statSync(itemFullPath);
 
     if (stat.isDirectory()) {
@@ -103,17 +113,17 @@ function parseFolderTree(startPath) {
 
 // 在每个文件夹下创建CATALOG.mg
 function catalogEachFolder(folderNode) {
-  const mdFilePath = path.join(folderNode.folderFullPath, CATALOG_FILE_NAME)
-  console.log(`generateCatalogMd: ${mdFilePath}`)
+  const mdFilePath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
+  console.log(`generating: ${mdFilePath}`)
 
   let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
     let fileName = path.basename(fileFullPath)
-    return `[${fileName}](${encodeURIComponent(fileName)})  `
+    return `[${escapeMarkdownLinkText(fileName)}](${encodeURI(fileName)})  `
   })
   let foldersLines = folderNode.subFolders.map(x => {
     let folderName = path.basename(x.folderFullPath)
     return x.fileCnt ?
-      `[${folderName}](${encodeURIComponent(path.join(folderName, CATALOG_FILE_NAME))})  ` :
+      `[${escapeMarkdownLinkText(folderName)}](${encodeURI(pathJoin(folderName, CATALOG_FILE_NAME))})  ` :
       `${folderName}  `
   })
 
@@ -141,10 +151,10 @@ function catalogTotal(folderTreeData) {
     for (folderNode of folderTreeData) {
       if (!folderNode.fileCnt) continue;
       let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
-        return `[${path.basename(fileFullPath)}](${encodeURIComponent(fileFullPath)})  `
+        return `[${escapeMarkdownLinkText(path.basename(fileFullPath))}](${encodeURI(fileFullPath)})  `
       })
 
-      resultLines.push(`${nChar('#', headingLevel)} [${folderNode.folderFullPath}](${encodeURIComponent(path.join(folderNode.folderFullPath, CATALOG_FILE_NAME))})`)
+      resultLines.push(`${nChar('#', headingLevel)} [${escapeMarkdownLinkText(path.basename(folderNode.folderFullPath))}](${encodeURI(pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME))})`)
       resultLines.push(null)
       resultLines.push(...filesLines)
       resultLines.push(null)
@@ -179,6 +189,7 @@ for (folerNode of folderList) {
 }
 
 const catalogTotalLines = catalogTotal(treeResult.treeData)
+console.log(`generating: ${CATALOG_FILE_NAME}`);
 fs.writeFileSync(CATALOG_FILE_NAME, catalogTotalLines.join('\n'))
 concatReadme(catalogTotalLines)
 
