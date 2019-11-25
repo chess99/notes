@@ -184,6 +184,28 @@ function concatReadme() {
   fs.writeFileSync('./README.md', README)
 }
 
+function moveFileToDeployFolder() {
+  const DEPLOY_FOLDER = 'gh_pages_deploy'
+
+  function shouldMove(pathName) {
+    if (pathName[0] === '.') return false
+    if (pathName === DEPLOY_FOLDER) return false
+    if (/\.js(?:on)?$/.test(pathName)) return false
+    return true
+  }
+
+  if (fs.existsSync(DEPLOY_FOLDER)) fs.rmdirSync(DEPLOY_FOLDER, { recursive: true })
+  if (!fs.existsSync(DEPLOY_FOLDER)) fs.mkdirSync(DEPLOY_FOLDER)
+  const files = fs.readdirSync('.')
+  files.forEach(oldPath => {
+    if (shouldMove(oldPath)) {
+      let newPath = path.join(DEPLOY_FOLDER, oldPath)
+      console.log(`${oldPath} => ${newPath}`);
+      fs.renameSync(oldPath, newPath)
+    }
+  })
+}
+
 ////////////////////////////////////////////////////
 
 let treeResult = parseFolderTree('.')
@@ -207,5 +229,6 @@ fs.writeFileSync(CATALOG_FILE_NAME, catalogTotalLines.join('\n'))
 console.log('concat Readme');
 concatReadme(catalogTotalLines)
 
+if (process.env.CI) moveFileToDeployFolder()
 
 console.log('done');
