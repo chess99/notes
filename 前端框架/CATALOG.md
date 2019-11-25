@@ -2,4 +2,3 @@
 
 [VUE](VUE/CATALOG)    
 
-[virtual-dom.md](virtual-dom)    
