@@ -1,4 +1,4 @@
-name: github pages
+name: github pages deploy action
 
 on:
   [push]

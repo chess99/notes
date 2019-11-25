@@ -9,6 +9,16 @@ function pathJoin(...paths) {
   return paths.join('/')
 }
 
+function mdLink(linkText, linkAddr) {
+  if (!linkAddr) linkAddr = linkText
+  linkText = escapeMarkdownLinkText(linkText)
+
+  if (process.env.CI) linkAddr = linkAddr.replace(/\.md$/, '')  // github pages的链接不要后缀.md
+  linkAddr = encodeURI(linkAddr)
+
+  return `[${linkText}](${linkAddr})  `
+}
+
 function escapeMarkdownLinkText(text) {
   return text.replace(/([$])/g, `\\$1`)
 }
@@ -118,12 +128,12 @@ function catalogEachFolder(folderNode) {
 
   let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
     let fileName = path.basename(fileFullPath)
-    return `[${escapeMarkdownLinkText(fileName)}](${encodeURI(fileName)})  `
+    return `${mdLink(fileName)}  `
   })
   let foldersLines = folderNode.subFolders.map(x => {
     let folderName = path.basename(x.folderFullPath)
     return x.fileCnt ?
-      `[${escapeMarkdownLinkText(folderName)}](${encodeURI(pathJoin(folderName, CATALOG_FILE_NAME))})  ` :
+      `${mdLink(folderName, pathJoin(folderName, CATALOG_FILE_NAME))}  ` :
       `${folderName}  `
   })
 
@@ -151,10 +161,13 @@ function catalogTotal(folderTreeData) {
     for (folderNode of folderTreeData) {
       if (!folderNode.fileCnt) continue;
       let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
-        return `[${escapeMarkdownLinkText(path.basename(fileFullPath))}](${encodeURI(fileFullPath)})  `
+        return `${mdLink(path.basename(fileFullPath), fileFullPath)}`
       })
 
-      resultLines.push(`${nChar('#', headingLevel)} [${escapeMarkdownLinkText(path.basename(folderNode.folderFullPath))}](${encodeURI(pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME))})`)
+      let folderName = path.basename(folderNode.folderFullPath)
+      let catalogFullPath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
+      let _mdlink = mdLink(folderName, catalogFullPath)
+      resultLines.push(`${nChar('#', headingLevel)} ${_mdlink})`)
       resultLines.push(null)
       resultLines.push(...filesLines)
       resultLines.push(null)
