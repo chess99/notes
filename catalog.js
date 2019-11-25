@@ -167,7 +167,7 @@ function catalogTotal(folderTreeData) {
       let folderName = path.basename(folderNode.folderFullPath)
       let catalogFullPath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
       let _mdlink = mdLink(folderName, catalogFullPath)
-      resultLines.push(`${nChar('#', headingLevel)} ${_mdlink})`)
+      resultLines.push(`${nChar('#', headingLevel)} ${_mdlink}`)
       resultLines.push(null)
       resultLines.push(...filesLines)
       resultLines.push(null)
