@@ -204,6 +204,7 @@ for (folerNode of folderList) {
 const catalogTotalLines = catalogTotal(treeResult.treeData)
 console.log(`generating: ${CATALOG_FILE_NAME}`);
 fs.writeFileSync(CATALOG_FILE_NAME, catalogTotalLines.join('\n'))
+console.log('concat Readme');
 concatReadme(catalogTotalLines)
 
 
