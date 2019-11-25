@@ -29,11 +29,9 @@ jobs:
         CI: true
 
     - name: Deploy
-      uses: peaceiris/actions-gh-pages@v2.5.0
+      uses: JamesIves/github-pages-deploy-action@master
       env:
-        # ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
-        PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: .
-      with:
-        emptyCommits: true
+        ACCESS_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
+        BRANCH: gh-pages
+        FOLDER: ./
+        BUILD_SCRIPT: npm run build
