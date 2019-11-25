@@ -3,13 +3,33 @@ const path = require('path');
 
 const CATALOG_FILE_NAME = 'CATALOG.md'
 
+console.log('process.env.CI', process.env.CI);
+
+function pathJoin(...paths) {
+  return paths.join('/')
+}
+
+function mdLink(linkText, linkAddr) {
+  if (!linkAddr) linkAddr = linkText
+  linkText = escapeMarkdownLinkText(linkText)
+
+  if (process.env.CI) linkAddr = linkAddr.replace(/\.md$/, '')  // github pages的链接不要后缀.md
+  linkAddr = encodeURI(linkAddr)
+
+  return `[${linkText}](${linkAddr})  `
+}
+
+function escapeMarkdownLinkText(text) {
+  return text.replace(/([$])/g, `\\$1`)
+}
+
 function parseFolder(rootPath) {
   let currLevelFolders = [];
   let currLevelFiles = [];
 
   const foldersAndFiles = fs.readdirSync(rootPath);
   for (let item of foldersAndFiles) {
-    const itemFullPath = path.join(rootPath, item);
+    const itemFullPath = pathJoin(rootPath, item);
     const stat = fs.statSync(itemFullPath);
 
     if (stat.isDirectory()) {
@@ -103,17 +123,17 @@ function parseFolderTree(startPath) {
 
 // 在每个文件夹下创建CATALOG.mg
 function catalogEachFolder(folderNode) {
-  const mdFilePath = path.join(folderNode.folderFullPath, CATALOG_FILE_NAME)
-  console.log(`generateCatalogMd: ${mdFilePath}`)
+  const mdFilePath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
+  console.log(`generating: ${mdFilePath}`)
 
   let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
     let fileName = path.basename(fileFullPath)
-    return `[${fileName}](${encodeURIComponent(fileName)})  `
+    return `${mdLink(fileName)}  `
   })
   let foldersLines = folderNode.subFolders.map(x => {
     let folderName = path.basename(x.folderFullPath)
     return x.fileCnt ?
-      `[${folderName}](${encodeURIComponent(path.join(folderName, CATALOG_FILE_NAME))})  ` :
+      `${mdLink(folderName, pathJoin(folderName, CATALOG_FILE_NAME))}  ` :
       `${folderName}  `
   })
 
@@ -141,10 +161,13 @@ function catalogTotal(folderTreeData) {
     for (folderNode of folderTreeData) {
       if (!folderNode.fileCnt) continue;
       let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
-        return `[${path.basename(fileFullPath)}](${encodeURIComponent(fileFullPath)})  `
+        return `${mdLink(path.basename(fileFullPath), fileFullPath)}`
       })
 
-      resultLines.push(`${nChar('#', headingLevel)} [${folderNode.folderFullPath}](${encodeURIComponent(path.join(folderNode.folderFullPath, CATALOG_FILE_NAME))})`)
+      let folderName = path.basename(folderNode.folderFullPath)
+      let catalogFullPath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
+      let _mdlink = mdLink(folderName, catalogFullPath)
+      resultLines.push(`${nChar('#', headingLevel)} ${_mdlink}`)
       resultLines.push(null)
       resultLines.push(...filesLines)
       resultLines.push(null)
@@ -159,6 +182,28 @@ function concatReadme() {
   const _README = fs.readFileSync('./_README.md', { encoding: 'utf8' })
   let README = _README + '\n' + catalogTotalLines.join('\n')
   fs.writeFileSync('./README.md', README)
+}
+
+function moveFileToDeployFolder() {
+  const DEPLOY_FOLDER = 'gh_pages_deploy'
+
+  function shouldMove(pathName) {
+    if (pathName[0] === '.') return false
+    if (pathName === DEPLOY_FOLDER) return false
+    // if (/\.js(?:on)?$/.test(pathName)) return false
+    return true
+  }
+
+  if (fs.existsSync(DEPLOY_FOLDER)) fs.rmdirSync(DEPLOY_FOLDER, { recursive: true })
+  if (!fs.existsSync(DEPLOY_FOLDER)) fs.mkdirSync(DEPLOY_FOLDER)
+  const files = fs.readdirSync('.')
+  files.forEach(oldPath => {
+    if (shouldMove(oldPath)) {
+      let newPath = path.join(DEPLOY_FOLDER, oldPath)
+      console.log(`${oldPath} => ${newPath}`);
+      fs.renameSync(oldPath, newPath)
+    }
+  })
 }
 
 ////////////////////////////////////////////////////
@@ -179,8 +224,11 @@ for (folerNode of folderList) {
 }
 
 const catalogTotalLines = catalogTotal(treeResult.treeData)
+console.log(`generating: ${CATALOG_FILE_NAME}`);
 fs.writeFileSync(CATALOG_FILE_NAME, catalogTotalLines.join('\n'))
+console.log('concat Readme');
 concatReadme(catalogTotalLines)
 
+if (process.env.CI) moveFileToDeployFolder()
 
 console.log('done');

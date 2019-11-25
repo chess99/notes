@@ -1,9 +1,7 @@
-name: github pages
+name: github pages deploy action
 
 on:
-  push:
-    branches:
-    - master
+  [push]
 
 jobs:
   build-deploy:
@@ -12,7 +10,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [8.x, 10.x, 12.x]
+        node-version: [10.x]
 
     steps:
     - uses: actions/checkout@master
@@ -36,4 +34,6 @@ jobs:
         # ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         PERSONAL_TOKEN: ${{ secrets.PERSONAL_TOKEN }}
         PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: ./
+        PUBLISH_DIR: ./gh_pages_deploy
+      with:
+        emptyCommits: true
