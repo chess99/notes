@@ -121,7 +121,7 @@ function parseFolderTree(startPath) {
   }
 }
 
-// 在每个文件夹下创建CATALOG.mg
+// 在每个文件夹下创建CATALOG.md
 function catalogEachFolder(folderNode) {
   const mdFilePath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
   console.log(`generating: ${mdFilePath}`)
@@ -150,27 +150,30 @@ function catalogEachFolder(folderNode) {
 
 
 function nChar(char, n = 1) {
+  if (n < 0) n = 0;
   return Array.from({ length: n }, x => char).join('')
 }
 
 function catalogTotal(folderTreeData) {
   let resultLines = []
   resultLines.push(`## 目录`, null)
-  function _catalogRecursive(folderTreeData, headingLevel = 2) {
+  function _catalogRecursive(folderTreeData, headingLevel = -1) {
+    // 根目录"./"算为-1级, 并且不列出. 从子目录开始作为0级列出.
     let nextHeadingLevel = headingLevel + 1;
     for (folderNode of folderTreeData) {
       if (!folderNode.fileCnt) continue;
       let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
         return `${mdLink(path.basename(fileFullPath), fileFullPath)}`
       })
-
       let folderName = path.basename(folderNode.folderFullPath)
       let catalogFullPath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
       let _mdlink = mdLink(folderName, catalogFullPath)
-      resultLines.push(`${nChar('#', headingLevel)} ${_mdlink}`)
-      resultLines.push(null)
-      resultLines.push(...filesLines)
-      resultLines.push(null)
+
+      if (folderNode.folderFullPath !== '.') {
+        filesLines = filesLines.map(x => `${nChar(' ', (headingLevel + 1) * 4)}- ${x}`)
+        resultLines.push(`${nChar(' ', (headingLevel - 0) * 4)}- ${_mdlink}`)
+        if (filesLines.length) resultLines.push(...filesLines)
+      }
       _catalogRecursive(folderNode.subFolders, nextHeadingLevel)
     }
   }
