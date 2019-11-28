@@ -1,3 +1,39 @@
+<!-- TOC -->
+
+- [基础语法](#基础语法)
+  - [标题](#标题)
+  - [段落](#段落)
+  - [字体](#字体)
+  - [分隔线](#分隔线)
+  - [删除线](#删除线)
+  - [下划线](#下划线)
+  - [脚注](#脚注)
+  - [列表](#列表)
+  - [区块](#区块)
+  - [代码](#代码)
+  - [链接](#链接)
+  - [图片](#图片)
+  - [表格](#表格)
+  - [HTML元素](#html元素)
+  - [转义](#转义)
+  - [公式](#公式)
+  - [符号表情](#符号表情)
+  - [TOC](#toc)
+  - [任务列表](#任务列表)
+  - [锚点](#锚点)
+  - [文件跳转](#文件跳转)
+  - [导图](#导图)
+    - [sequence](#sequence)
+    - [flow](#flow)
+    - [flowchart](#flowchart)
+  - [目录树](#目录树)
+  - [自定义折叠区](#自定义折叠区)
+- [Github Flavord](#github-flavord)
+- [推荐编辑器](#推荐编辑器)
+- [参考链接](#参考链接)
+
+<!-- /TOC -->
+
 # 基础语法
 
 ## 标题
@@ -552,7 +588,7 @@ https://github.github.com/gfm/
 
 
 
-# 编辑器
+# 推荐编辑器
 
 - [typora]( https://www.typora.io/ )
 - vscode + [ Markdown All in One ]( https://marketplace.visualstudio.com/items?itemName=yzhang.markdown-all-in-one )
