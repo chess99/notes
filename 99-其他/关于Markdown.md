@@ -24,6 +24,10 @@
   - [文件跳转](#文件跳转)
   - [导图](#导图)
     - [sequence](#sequence)
+    - [flow](#flow)
+    - [flowchart](#flowchart)
+  - [目录树](#目录树)
+  - [自定义折叠区](#自定义折叠区)
 - [Github Flavord](#github-flavord)
 - [推荐编辑器](#推荐编辑器)
 - [参考链接](#参考链接)
@@ -465,13 +469,11 @@ vscode有插件[Markdown TOC]( https://marketplace.visualstudio.com/items?itemNa
 
 ### sequence
 
-~~~
-​```sequence
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
-```
-~~~
+    ​```sequence
+    Alice->Bob: Hello Bob, how are you?
+    Note right of Bob: Bob thinks
+    Bob-->Alice: I am good thanks!
+    ```
 
 
 ### flow
