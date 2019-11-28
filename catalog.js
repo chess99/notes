@@ -155,22 +155,26 @@ function getCatalogTotalLines(folderTreeData) {
 }
 
 // 从 folderNode 开始, 递归地生成markdown的行
-function getCatalogLines(folderNode) {
+function getCatalogLines(rootNode, relativePath = false) {
   const INDENT_SPACES = 4
+  const basePath = rootNode.folderFullPath
   let lines = []
+
   function _catalogRecursive(_folderNode, headingLevel = 0) {
     if (!_folderNode.fileCnt) return;
     let nextHeadingLevel = headingLevel + 1;
 
     // 当前文件夹的链接
-    let catalogFullPath = pathJoin(_folderNode.folderFullPath, CATALOG_FILE_NAME);
+    let folderPath = relativePath ? _folderNode.folderFullPath.replace(basePath, '.') : _folderNode.folderFullPath
+    let catalogFilePath = pathJoin(folderPath, CATALOG_FILE_NAME);
     let folderName = path.basename(_folderNode.folderFullPath);
-    let folderLink = mdLink(folderName, catalogFullPath);
+    let folderLink = mdLink(folderName, catalogFilePath);
     lines.push(`${nChar(' ', (headingLevel + 0) * INDENT_SPACES)}- ${folderLink}  `);
 
     // 当前文件夹内文件的链接
     let filesLines = _folderNode.currLevelFiles.map(fileFullPath => {
-      let fileLink = mdLink(path.basename(fileFullPath), fileFullPath);
+      let filePath = relativePath ? fileFullPath.replace(basePath, '.') : fileFullPath
+      let fileLink = mdLink(path.basename(fileFullPath), filePath);
       return `${nChar(' ', (headingLevel + 1) * INDENT_SPACES)}- ${fileLink}  `;
     });
     if (filesLines.length) lines.push(...filesLines);
@@ -180,7 +184,7 @@ function getCatalogLines(folderNode) {
       _catalogRecursive(subNode, nextHeadingLevel)
     }
   }
-  _catalogRecursive(folderNode)
+  _catalogRecursive(rootNode)
   return lines
 }
 
@@ -188,12 +192,12 @@ function getCatalogLines(folderNode) {
 function catalogEachFolder(folderNode) {
   const mdFilePath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
   console.log(`generating: ${mdFilePath}`)
-  
+
   let folderName = stripPrefixIndex(path.basename(folderNode.folderFullPath))
   let fileContent = [
     `# ${folderName}`,
     null,
-    ...getCatalogLines(folderNode)
+    ...getCatalogLines(folderNode, /*relativePath*/true)
   ]
   fs.writeFileSync(mdFilePath, fileContent.join('\n'))
 }
