@@ -1,6 +1,6 @@
 <!-- TOC -->
 
-- [基础语法](#基础语法)
+- [语法](#语法)
   - [标题](#标题)
   - [段落](#段落)
   - [字体](#字体)
@@ -34,7 +34,7 @@
 
 <!-- /TOC -->
 
-# 基础语法
+# 语法
 
 ## 标题
 
@@ -193,8 +193,8 @@ Markdown 脚注的格式如下:
 
 ```
 - 第一项
-    > 菜鸟教程
-    > 学的不仅是技术更是梦想
+    > 菜鸟教程  
+    > 学的不仅是技术更是梦想  
 - 第二项
 ```
 
@@ -205,23 +205,25 @@ Markdown 脚注的格式如下:
 
 ## 代码
 
-如果是段落上的一个函数或片段的代码可以用反引号把它包起来（**`**）
+如果是段落上的一个函数或片段的代码可以用反引号 ` 把它包起来
 
 ```
 `printf()` 函数
 ```
 
-可以用 **```** 包裹一段代码，并指定一种语言（也可以不指定）：
+可以用 ``` 或 ~~~ 包裹一段代码，并指定一种语言（也可以不指定）：
 
-```
+~~~
 ​```javascript
 $(document).ready(function () {
     alert('RUNOOB');
 });
 ​```
-```
+~~~
 
-代码区块使用 **4 个空格**或者一个**制表符（Tab 键）**。
+或者: 行首使用 **4 个空格**或一个**制表符（Tab 键）** 表示代码区块  
+<https://github.github.com/gfm/#indented-code-blocks>  
+
 
 ## 链接
 
@@ -264,7 +266,7 @@ $(document).ready(function () {
 
 
 
-Markdown 还没有办法指定图片的高度与宽度，如果你需要的话，你可以使用普通的 <img> 标签。
+Markdown 还没有办法指定图片的高度与宽度，如果你需要的话，你可以使用普通的 `<img>` 标签。
 
 ```
 <img src="http://static.runoob.com/images/runoob-logo.png" width="50%">
@@ -332,7 +334,6 @@ $$
 \frac{\partial X}{\partial v} &  \frac{\partial Y}{\partial v} & 0 \\
 \end{vmatrix}
 $$
-
 ```
 
 $$
@@ -343,19 +344,28 @@ $$
 \end{vmatrix}
 $$
 
+注意: GitHub Flavored Markdown不支持LaTex  
+但是可以用别的方法实现:
+
+```
+![](http://latex.codecogs.com/gif.latex?\\frac{1}{1+sin(x)})
+```
+
+![](http://latex.codecogs.com/gif.latex?\\frac{1}{1+sin(x)})  
+参考: <https://www.zhihu.com/question/26887527>  
+
+另: 一个在线公式编辑器 <http://latex.codecogs.com/>  
 
 
 **LaTeX参考:**
 
-Cmd Markdown 公式指导手册   (LaTex快速入门)
+Cmd Markdown 公式指导手册   (LaTex快速入门)  
+<https://www.zybuluo.com/codeep/note/163962>  
 
-https://www.zybuluo.com/codeep/note/163962
 
 LaTeX Documentation  (官方文档)
-
-https://www.latex-project.org/help/documentation/#general-documentation
-
-https://www.latex-project.org/help/documentation/usrguide.pdf
+<https://www.latex-project.org/help/documentation/#general-documentation>  
+<https://www.latex-project.org/help/documentation/usrguide.pdf>  
 
 
 
@@ -366,15 +376,13 @@ MathML 是 W3C 于 1998 年 4 月 7 日提出的一个推荐标准，主要用�
 LaTeX 是由 Leslie Lamport 在八十年代早期基于 Donald E. Knuth 教授的 TeX 系统开发的一种宏语言，它使得 TeX 系统更易于使用。LaTeX 适合排版普通文章、书籍、报告、书信及幻灯片等，应用领域可以说是 TeX 和 MathML 的超集。虽说 LaTeX 是一种通用语言，但其数学排版功能也非常强，有许多数学相关的文档是以 LaTeX 格式编排的。
 
 MathML 与 LaTeX 的映射关系分析
-https://www.ibm.com/developerworks/cn/xml/x-mathml2/index.html
+<https://www.ibm.com/developerworks/cn/xml/x-mathml2/index.html>  
 
 
 
-[MathJax](https://www.mathjax.org/)是一款运行在浏览器中的开源数学符号渲染引擎，使用MathJax可以方便的在浏览器中显示数学公式，不需要使用图片。目前，MathJax可以解析Latex、MathML和ASCIIMathML的标记语言。
-
-https://www.mathjax.org/
-
-https://docs.mathjax.org/en/latest/index.html
+[MathJax](https://www.mathjax.org/)是一款运行在浏览器中的开源数学符号渲染引擎，使用MathJax可以方便的在浏览器中显示数学公式，不需要使用图片。目前，MathJax可以解析Latex、MathML和ASCIIMathML的标记语言。  
+<https://www.mathjax.org/>  
+<https://docs.mathjax.org/en/latest/index.html>  
 
 
 
@@ -388,7 +396,8 @@ https://docs.mathjax.org/en/latest/index.html
 
 :happy::blush:
 
-具体每一个表情的符号码，可以查询GitHub的官方网页[http://www.emoji-cheat-sheet.com](http://www.emoji-cheat-sheet.com/) 或者 <https://github.com/guodongxiaren/README/blob/master/emoji.md>
+具体每一个表情的符号码，可以查询GitHub的官方网页<http://www.emoji-cheat-sheet.com>  
+或者 <https://github.com/guodongxiaren/README/blob/master/emoji.md>
 
 
 
@@ -402,21 +411,21 @@ TODO : 支持情况
 [TOC]
 ```
 
-Typora中有效
-Github / Github Pages中无效
-vscode有插件[Markdown TOC]( https://marketplace.visualstudio.com/items?itemName=AlanWalk.markdown-toc )可以生成TOC
+Typora中有效  
+Github / Github Pages中无效  
+vscode有插件[Markdown TOC]( https://marketplace.visualstudio.com/items?itemName=AlanWalk.markdown-toc )可以生成TOC  
 
 
 
 ## 任务列表
 
 ```
- - [x] 吃饭
- - [ ] 睡觉
+- [x] 吃饭
+- [ ] 睡觉
 ```
 
 - [x] 吃饭
- - [ ] 睡觉
+- [ ] 睡觉
 
 
 
@@ -435,20 +444,22 @@ vscode有插件[Markdown TOC]( https://marketplace.visualstudio.com/items?itemNa
 或者使用`<a>`标签
 
 ```html
-<a id="bottom"/>
-<a href="#bottom">`跳转到底部`</a>
+<a id="bottom"></a>
+
+<a href="#bottom">跳转到底部</a>
 [跳转到底部](#bottom)
 ```
 
+<a href="#bottom">跳转到底部</a>
 
 
 ## 文件跳转
 
 ```
-[上层readme](../readme.md)
+[上层README.md](../README.md)
 ```
 
-[上层readme](../readme.md)
+[上层README.md](../README.md)
 
 
 
@@ -458,23 +469,16 @@ vscode有插件[Markdown TOC]( https://marketplace.visualstudio.com/items?itemNa
 
 ### sequence
 
-```
-​```sequence
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
-```
-```sequence
-Alice->Bob: Hello Bob, how are you?
-Note right of Bob: Bob thinks
-Bob-->Alice: I am good thanks!
-```
-
+    ​```sequence
+    Alice->Bob: Hello Bob, how are you?
+    Note right of Bob: Bob thinks
+    Bob-->Alice: I am good thanks!
+    ```
 
 
 ### flow
 
-~~~gfm
+~~~
 ```flow
 st=>start: Start
 op=>operation: Your Operation
@@ -486,21 +490,10 @@ cond(yes)->e
 cond(no)->op
 ```
 ~~~
-
-```flow
-st=>start: Start
-op=>operation: Your Operation
-cond=>condition: Yes or No?
-e=>end
-
-st->op->cond
-cond(yes)->e
-cond(no)->op
-```
 
 ### flowchart
 
-~~~gfm
+~~~
 ```mermaid
 graph LR
 A[Hard edge] -->B(Round edge)
@@ -510,15 +503,10 @@ A[Hard edge] -->B(Round edge)
 ```
 ~~~
 
-```mermaid
-graph LR
-A[Hard edge] -->B(Round edge)
-    B --> C{Decision}
-    C -->|One| D[Result one]
-    C -->|Two| E[Result two]
-```
 
-更多见[文档](<https://support.typora.io/Draw-Diagrams-With-Markdown/>)..
+更多见[文档](<https://support.typora.io/Draw-Diagrams-With-Markdown/>)..  
+
+注意: GitHub Flavored Markdown不支持  
 
 
 
@@ -537,23 +525,15 @@ node mddir "../relative/path/"
 
 参考
 
-<https://vimsky.com/article/3606.html>
-
-<http://landcareweb.com/questions/2298/zai-markdownyu-fa-zhong-biao-shi-mu-lu-he-wen-jian-jie-gou>
+<https://vimsky.com/article/3606.html>  
+<http://landcareweb.com/questions/2298/zai-markdownyu-fa-zhong-biao-shi-mu-lu-he-wen-jian-jie-gou>  
 
 
 
 ## 自定义折叠区
 
-<https://www.w3cschool.cn/lme/93u61srz.html>
 
-```
-region i { information 示例
-← information icon
-} region information 示例
-```
-
-<https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details>
+<https://developer.mozilla.org/en-US/docs/Web/HTML/Element/details>  
 
 ```
 <details>
@@ -567,14 +547,21 @@ region i { information 示例
     Something small enough to escape casual notice.
 </details>
 
+<https://www.w3cschool.cn/lme/93u61srz.html>  
 
+```
+region i { information 示例
+← information icon
+} region information 示例
+```
+
+这种试了无效..
 
 
 # Github Flavord
 
-<https://help.github.com/en/articles/autolinked-references-and-urls>
-
-https://github.github.com/gfm/
+<https://help.github.com/en/articles/autolinked-references-and-urls>  
+<https://github.github.com/gfm/>  
 
 
 
@@ -597,47 +584,35 @@ https://github.github.com/gfm/
 
 # 参考链接 
 
-语法
-
-<https://guides.github.com/features/mastering-markdown/>
-
-<https://segmentfault.com/markdown>
-
-<http://wowubuntu.com/markdown/>
-
- <http://www.runoob.com/markdown/md-advance.html>
-
-<https://www.w3cschool.cn/lme/>
+语法  
+<https://guides.github.com/features/mastering-markdown/>  
+<https://segmentfault.com/markdown>  
+<http://wowubuntu.com/markdown/>  
+ <http://www.runoob.com/markdown/md-advance.html>  
+<https://www.w3cschool.cn/lme/>  
 
 
 
-README文件语法解读，即Github Flavored Markdown语法介绍 
-
-https://github.com/guodongxiaren/README
-
-<https://help.github.com/en/categories/writing-on-github>
+README文件语法解读，即Github Flavored Markdown语法介绍  
+<https://github.com/guodongxiaren/README>  
+<https://help.github.com/en/categories/writing-on-github>  
 
 
 
-writage: Markdown plugin for Microsoft Word
-
-<http://www.writage.com/>
+writage: Markdown plugin for Microsoft Word  
+<http://www.writage.com/>  
 
  
 
- 
+`Editor.md` ---- 开源在线 Markdown 编辑器  
+<https://pandao.github.io/editor.md/index.html>  
 
-Editor.md    ----    开源在线 Markdown 编辑器
 
-<https://pandao.github.io/editor.md/index.html>
 
- 
+vscode中markdown支持  
+<https://code.visualstudio.com/docs/languages/markdown>  
 
- 
-
-vscode中markdown支持
-
-<https://code.visualstudio.com/docs/languages/markdown>
+<a id="bottom"></a>
 
 
 
