@@ -9,18 +9,47 @@ function pathJoin(...paths) {
   return paths.join('/')
 }
 
+function nChar(char, n = 1) {
+  if (n < 0) n = 0;
+  return Array.from({ length: n }, x => char).join('')
+}
+
 function mdLink(linkText, linkAddr) {
   if (!linkAddr) linkAddr = linkText
+  linkText = stripPrefixIndex(linkText)
   linkText = escapeMarkdownLinkText(linkText)
 
   if (process.env.CI) linkAddr = linkAddr.replace(/\.md$/, '')  // github pages的链接不要后缀.md
   linkAddr = encodeURI(linkAddr)
 
-  return `[${linkText}](${linkAddr})  `
+  return `[${linkText}](${linkAddr})`
+}
+
+// 001-foo.md => foo.md
+function stripPrefixIndex(string) {
+  const match = string.match(/^\d+-(.*)/)
+  return match ? match[1] : string
 }
 
 function escapeMarkdownLinkText(text) {
   return text.replace(/([$])/g, `\\$1`)
+}
+
+function shouldFolderExcluded(folderName) {
+  if (folderName.length > 1 && folderName[0] === '.') return true;
+  if (folderName === 'assets') return true
+  return false
+}
+
+function shouldFileExcluded(fileName) {
+  const excludeFileNames = [
+    CATALOG_FILE_NAME,
+    '_README.md',
+  ]
+  if (fileName.length > 1 && fileName[0] === '.') return true;
+  if (path.extname(fileName) !== '.md') return true
+  if (excludeFileNames.find(x => x === fileName)) return true
+  return false
 }
 
 function parseFolder(rootPath) {
@@ -49,24 +78,6 @@ function parseFolder(rootPath) {
     folers: currLevelFolders,
     files: currLevelFiles
   }
-}
-
-
-function shouldFolderExcluded(folderName) {
-  if (folderName.length > 1 && folderName[0] === '.') return true;
-  if (folderName === 'assets') return true
-  return false
-}
-
-function shouldFileExcluded(fileName) {
-  const excludeFileNames = [
-    CATALOG_FILE_NAME,
-    '_README.md',
-  ]
-  if (fileName.length > 1 && fileName[0] === '.') return true;
-  if (path.extname(fileName) !== '.md') return true
-  if (excludeFileNames.find(x => x === fileName)) return true
-  return false
 }
 
 function parseFolderTree(startPath) {
@@ -121,69 +132,75 @@ function parseFolderTree(startPath) {
   }
 }
 
+function getAllMdFilePath(path) {
+  const treeResult = parseFolderTree(path)
+  const { folderList } = treeResult
+  let mdList = []
+  folderList.forEach(folder => {
+    mdList.push(...folder.currLevelFiles)
+  })
+  mdList = [...new Set(mdList)]
+  return mdList
+}
+
+function getCatalogTotalLines(folderTreeData) {
+  let resultLines = []
+  resultLines.push(`## 目录`, null)
+  const root = folderTreeData[0]
+  for (let node of root.subFolders) {
+    let lines = getCatalogLines(node)
+    resultLines.push(...lines)
+  }
+  return resultLines
+}
+
+// 从 folderNode 开始, 递归地生成markdown的行
+function getCatalogLines(folderNode) {
+  const INDENT_SPACES = 4
+  let lines = []
+  function _catalogRecursive(_folderNode, headingLevel = 0) {
+    if (!_folderNode.fileCnt) return;
+    let nextHeadingLevel = headingLevel + 1;
+
+    // 当前文件夹的链接
+    let catalogFullPath = pathJoin(_folderNode.folderFullPath, CATALOG_FILE_NAME);
+    let folderName = path.basename(_folderNode.folderFullPath);
+    let folderLink = mdLink(folderName, catalogFullPath);
+    lines.push(`${nChar(' ', (headingLevel + 0) * INDENT_SPACES)}- ${folderLink}  `);
+
+    // 当前文件夹内文件的链接
+    let filesLines = _folderNode.currLevelFiles.map(fileFullPath => {
+      let fileLink = mdLink(path.basename(fileFullPath), fileFullPath);
+      return `${nChar(' ', (headingLevel + 1) * INDENT_SPACES)}- ${fileLink}  `;
+    });
+    if (filesLines.length) lines.push(...filesLines);
+
+    // 递归子文件夹
+    for (let subNode of _folderNode.subFolders) {
+      _catalogRecursive(subNode, nextHeadingLevel)
+    }
+  }
+  _catalogRecursive(folderNode)
+  return lines
+}
+
 // 在每个文件夹下创建CATALOG.md
 function catalogEachFolder(folderNode) {
   const mdFilePath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
   console.log(`generating: ${mdFilePath}`)
-
-  let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
-    let fileName = path.basename(fileFullPath)
-    return `${mdLink(fileName)}  `
-  })
-  let foldersLines = folderNode.subFolders.map(x => {
-    let folderName = path.basename(x.folderFullPath)
-    return x.fileCnt ?
-      `${mdLink(folderName, pathJoin(folderName, CATALOG_FILE_NAME))}  ` :
-      `${folderName}  `
-  })
-
+  
+  let folderName = stripPrefixIndex(path.basename(folderNode.folderFullPath))
   let fileContent = [
-    `# ${path.basename(folderNode.folderFullPath)}`,
+    `# ${folderName}`,
     null,
-    ...foldersLines,
-    null,
-    ...filesLines,
-    null
+    ...getCatalogLines(folderNode)
   ]
   fs.writeFileSync(mdFilePath, fileContent.join('\n'))
 }
 
-
-function nChar(char, n = 1) {
-  if (n < 0) n = 0;
-  return Array.from({ length: n }, x => char).join('')
-}
-
-function catalogTotal(folderTreeData) {
-  let resultLines = []
-  resultLines.push(`## 目录`, null)
-  function _catalogRecursive(folderTreeData, headingLevel = -1) {
-    // 根目录"./"算为-1级, 并且不列出. 从子目录开始作为0级列出.
-    let nextHeadingLevel = headingLevel + 1;
-    for (folderNode of folderTreeData) {
-      if (!folderNode.fileCnt) continue;
-      let filesLines = folderNode.currLevelFiles.map(fileFullPath => {
-        return `${mdLink(path.basename(fileFullPath), fileFullPath)}`
-      })
-      let folderName = path.basename(folderNode.folderFullPath)
-      let catalogFullPath = pathJoin(folderNode.folderFullPath, CATALOG_FILE_NAME)
-      let _mdlink = mdLink(folderName, catalogFullPath)
-
-      if (folderNode.folderFullPath !== '.') {
-        filesLines = filesLines.map(x => `${nChar(' ', (headingLevel + 1) * 4)}- ${x}`)
-        resultLines.push(`${nChar(' ', (headingLevel - 0) * 4)}- ${_mdlink}`)
-        if (filesLines.length) resultLines.push(...filesLines)
-      }
-      _catalogRecursive(folderNode.subFolders, nextHeadingLevel)
-    }
-  }
-  _catalogRecursive(folderTreeData)
-  return resultLines
-}
-
-function concatReadme() {
+function concatReadme(catalogLines) {
   const _README = fs.readFileSync('./_README.md', { encoding: 'utf8' })
-  let README = _README + '\n' + catalogTotalLines.join('\n')
+  let README = _README + '\n' + catalogLines.join('\n')
   fs.writeFileSync('./README.md', README)
 }
 
@@ -226,11 +243,11 @@ for (folerNode of folderList) {
   }
 }
 
-const catalogTotalLines = catalogTotal(treeResult.treeData)
+const catalogLines = getCatalogTotalLines(treeResult.treeData)
 console.log(`generating: ${CATALOG_FILE_NAME}`);
-fs.writeFileSync(CATALOG_FILE_NAME, catalogTotalLines.join('\n'))
+fs.writeFileSync(CATALOG_FILE_NAME, catalogLines.join('\n'))
 console.log('concat Readme');
-concatReadme(catalogTotalLines)
+concatReadme(catalogLines)
 
 if (process.env.CI) moveFileToDeployFolder()
 
