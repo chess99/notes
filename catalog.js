@@ -6,7 +6,7 @@ const CATALOG_FILE_NAME = 'CATALOG.md'
 console.log('process.env.CI', process.env.CI);
 
 function pathJoin(...paths) {
-  return paths.join('/')
+  return paths.join('/').replace(/\/+/g, '/')
 }
 
 function nChar(char, n = 1) {
@@ -240,7 +240,7 @@ fs.writeFileSync('.temp/folderList.json', JSON.stringify(treeResult.folderList, 
 fs.writeFileSync('.temp/plainTextResult.txt', treeResult.plainTextResult)
 
 const { folderList } = treeResult
-for (folerNode of folderList) {
+for (let folerNode of folderList) {
   // 根目录下的CATALOG.md单独生成
   if (folerNode.fileCnt && folerNode.folderFullPath !== '.') {
     catalogEachFolder(folerNode)
