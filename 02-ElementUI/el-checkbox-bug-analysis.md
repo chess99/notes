@@ -101,7 +101,7 @@ v-model的默认行为是绑定的 `input` 事件和 `value` 值
 
 > 默认情况下，一个组件上的 `v-model` 会把 `value` 用作 prop 且把 `input` 用作 event，但是一些输入类型比如单选框和复选框按钮可能想使用 `value` prop 来达到不同的目的。使用 `model` 选项可以回避这些情况产生的冲突。 
 
-< https://cn.vuejs.org/v2/api/#model >
+<https://cn.vuejs.org/v2/api/#model>
 
 
 
@@ -137,9 +137,9 @@ anArray: `["someDefaultValue", "someValue"]` <==> `["someDefaultValue"]`
 
 ## 问题总结 
 
-官方文档上只提到了 `change` 事件, 使人以为 `<el-checkbox-group>` 上的 `v-model` 等于 `:value + @change` ,
-实际 `<el-checkbox-group>` 上还有一个没在文档里提到的 `input` 事件, `v-model` 实际等于默认行为 `:value + @input` , 
-而 `<el-checkbox-group>` 上的`change`只是补发出来的一个事件, 如果没有在 `@input` 或者 `v-model` 里把值更新掉, `@change` 拿到的就还是更新前的值.
+官方文档上只提到了 `change` 事件, 使人以为 `<el-checkbox-group>` 上的 `v-model` 等于 `:value + @change` ,  
+实际 `<el-checkbox-group>` 上还有一个没在文档里提到的 `input` 事件, `v-model` 实际等于默认行为 `:value + @input` ,  
+而 `<el-checkbox-group>` 上的`change`只是补发出来的一个事件, 如果没有在 `@input` 或者 `v-model` 里把值更新掉, `@change` 拿到的就还是更新前的值.  
 
 
 
@@ -172,9 +172,8 @@ checkbox.spec.js 中有一个如下的测试:
   });
 ```
 
-原本的实现中, 同时有 `v-model="checked"` 和 `checked` 时, 用一个用户没有关注的 `input` 事件悄悄把 `checked` 变量的值改掉了,
-
-统一改用 `change` 事件后,  初始化时若 `v-model` 的值不为true | trueLabel, 会多加一次 `change` 事件 
+原本的实现中, 同时有 `v-model="checked"` 和 `checked` 时, 用一个用户没有关注的 `input` 事件悄悄把 `checked` 变量的值改掉了,  
+统一改用 `change` 事件后,  初始化时若 `v-model` 的值不为true | trueLabel, 会多加一次 `change` 事件  
 
 
 
