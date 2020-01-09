@@ -14,6 +14,7 @@
   - [多人协作](#多人协作)
   - [标签管理](#标签管理)
   - [配置别名](#配置别名)
+  - [cherry-pick](#cherry-pick)
 - [远程仓库](#远程仓库-1)
   - [创建远程仓库](#创建远程仓库)
   - [关联远程仓库](#关联远程仓库)
@@ -312,6 +313,22 @@ git config --global alias.lg "log --color --graph --pretty=format:'%Cred%h%Crese
 ![git-alias-lg](assets/git-alias-lg.png)
 
 
+
+## cherry-pick
+
+文档     <https://git-scm.com/docs/git-cherry-pick>  
+一篇博文 <https://juejin.im/post/5925a2d9a22b9d0058b0fd9b>  
+
+就是像捡樱桃, 从别的 branch 捡几个 commit 过来, 不需要是连续的 commit
+
+```
+git cherry-pick <commit-id>
+git cherry-pick -x <commit_id>    # 表示保留原提交的作者信息
+git cherry_pick <start-commit-id>…<end-commit-id>    # (左开，右闭] 的区间, 不包含start-commit
+git cherry-pick <start-commit-id>^...<end-commit-id>    # [左闭，右闭] 的区间
+
+# 更多写法见文档
+```
 
 
 
