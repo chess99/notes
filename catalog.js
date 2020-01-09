@@ -1,9 +1,29 @@
 const fs = require('fs');
 const path = require('path');
 
+console.log('process.env.CI', process.env.CI);
 const CATALOG_FILE_NAME = 'CATALOG.md'
 
-console.log('process.env.CI', process.env.CI);
+////////////////////////// 策略 //////////////////////////
+
+function shouldFolderExcluded(folderName) {
+  if (folderName.length > 1 && folderName[0] === '.') return true;
+  if (folderName === 'assets') return true
+  return false
+}
+
+function shouldFileExcluded(fileName) {
+  const excludeFileNames = [
+    CATALOG_FILE_NAME,
+    '_README.md',
+  ]
+  if (fileName.length > 1 && fileName[0] === '.') return true; // 跳过 . 开头的文件
+  if (path.extname(fileName) !== '.md') return true; // 跳过不是扩展不是 .md 的文件
+  if (excludeFileNames.find(x => x === fileName)) return true; // 跳过 excludeFileNames 列表中的文件
+  return false
+}
+
+////////////////////////// utils //////////////////////////
 
 function pathJoin(...paths) {
   return paths.join('/').replace(/\/+/g, '/')
@@ -33,23 +53,6 @@ function stripPrefixIndex(string) {
 
 function escapeMarkdownLinkText(text) {
   return text.replace(/([$])/g, `\\$1`)
-}
-
-function shouldFolderExcluded(folderName) {
-  if (folderName.length > 1 && folderName[0] === '.') return true;
-  if (folderName === 'assets') return true
-  return false
-}
-
-function shouldFileExcluded(fileName) {
-  const excludeFileNames = [
-    CATALOG_FILE_NAME,
-    '_README.md',
-  ]
-  if (fileName.length > 1 && fileName[0] === '.') return true;
-  if (path.extname(fileName) !== '.md') return true
-  if (excludeFileNames.find(x => x === fileName)) return true
-  return false
 }
 
 function parseFolder(rootPath) {
@@ -230,7 +233,30 @@ function moveFileToDeployFolder() {
   })
 }
 
-////////////////////////////////////////////////////
+function walk(rootPath, func) {
+  const foldersAndFiles = fs.readdirSync(rootPath);
+  for (let item of foldersAndFiles) {
+    const itemFullPath = pathJoin(rootPath, item);
+    const stat = fs.statSync(itemFullPath);
+    if (stat.isDirectory()) {
+      func(itemFullPath)
+      walk(itemFullPath, func)
+    } else {
+      func(itemFullPath)
+    }
+  }
+}
+
+////////////////////////// 执行 //////////////////////////
+
+walk('.', itemFullPath => {
+  const stat = fs.statSync(itemFullPath);
+  if (!stat.isDirectory()) return
+  let p = path.join(itemFullPath, CATALOG_FILE_NAME)
+  if (fs.existsSync(p)) {
+    fs.unlinkSync(p)
+  }
+})
 
 let treeResult = parseFolderTree('.')
 
