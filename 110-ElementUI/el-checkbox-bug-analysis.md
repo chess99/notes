@@ -186,3 +186,59 @@ checkbox.spec.js 中有一个如下的测试:
 开始用 `:value + @change` 而没用 `v-model` , 是因为我这里绑定的值是从 `computed` 里来的, 想自定义 `@change` 处理值更新的方式.
 
 这种情况下, 可以不用自定义 `@change` , 给 `computed` 的变量加一个 `setter` 就可以处理值更新的方式, 文档: [Computed Setter](https://vuejs.org/v2/guide/computed.html#Computed-Setter) 
+
+
+
+## 再补充: ant-design-vue 中的实现
+
+ant-design-vue 中 的 CheckboxGroup 没有这个问题
+
+首先 ant-design-vue 中的 CheckboxGroup 是单独作为一个组件使用, 它自己内置了 Checkbox, 不需要在其 slot 内塞 Checkbox
+
+然后, 以下情况时, defaultValue 被直接忽略, 并不会默默改变用户的 checkedList 变量
+
+```html
+<a-checkbox-group :defaultValue="defaultValue" v-model="checkedList" />
+
+const checkedList = ['Apple', 'Pear', 'Orange']
+const defaultCheckedList = ['Apple', 'Orange']
+```
+
+处理源码: 
+
+```JavaScript
+  // ant-design-vue/components/checkbox/Group.jsx
+
+  data() {
+    const { value, defaultValue } = this;
+    return {
+      sValue: value || defaultValue || [],
+    };
+  },
+```
+
+但是当 CheckboxGroup 没改变 v-model 的默认行为, 还是用 input 事件更新值, 与 input 同步发了一个 change 供用户使用. 暂时不清楚这是出于什么考虑.
+
+```javascript
+  model: {
+    prop: 'value',
+  },
+  
+  methods: {
+  ...
+    toggleOption(option) {
+      const optionIndex = this.sValue.indexOf(option.value);
+      const value = [...this.sValue];
+      if (optionIndex === -1) {
+        value.push(option.value);
+      } else {
+        value.splice(optionIndex, 1);
+      }
+      if (!hasProp(this, 'value')) {
+        this.sValue = value;
+      }
+      this.$emit('input', value);
+      this.$emit('change', value);
+    },
+```
+
