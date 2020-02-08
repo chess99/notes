@@ -18,6 +18,7 @@
     - [跨浏览器测试.md](./001-%E5%89%8D%E7%AB%AF%E7%BB%BC%E5%90%88/%E8%B7%A8%E6%B5%8F%E8%A7%88%E5%99%A8%E6%B5%8B%E8%AF%95.md)  
 - [前端框架](./100-%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/CATALOG.md)  
     - [VUE](./100-%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/VUE/CATALOG.md)  
+        - [一个render报错的分析.md](./100-%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/VUE/%E4%B8%80%E4%B8%AArender%E6%8A%A5%E9%94%99%E7%9A%84%E5%88%86%E6%9E%90.md)  
         - [响应式原理.md](./100-%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/VUE/%E5%93%8D%E5%BA%94%E5%BC%8F%E5%8E%9F%E7%90%86.md)  
 - [ElementUI](./110-ElementUI/CATALOG.md)  
     - [el-checkbox-bug-analysis.md](./110-ElementUI/el-checkbox-bug-analysis.md)  
