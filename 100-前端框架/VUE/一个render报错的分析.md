@@ -77,10 +77,10 @@
 
 ## 报错原因分析
 
-编译时通过 babel-plugin-transform-vue-jsx 把 JSXElement 转换成 h函数调用, 具体对 "tag" 的处理:
-作用域中找得到就当作变量
-作用域中找不到就当作字符串
-(这个 "tag" 后面被作为 createElement 的第一个参数)
+编译时通过 babel-plugin-transform-vue-jsx 把 JSXElement 转换成 h函数调用, 具体对 "tag" 的处理:  
+作用域中找得到就当作变量  
+作用域中找不到就当作字符串  
+(这个 "tag" 后面被作为 createElement 的第一个参数)  
 
 相关代码:
 
@@ -113,7 +113,7 @@
 
 
 
-执行时就近找到了 render函数, render函数被当作了 Ctor
+执行时就近找到了 render函数, render函数被当作了 Ctor  
 ( 正经的 Ctor 应该是一个 VueComponent )
 
 ![image-20200208004542213](assets/image-20200208004542213.png)
@@ -163,21 +163,21 @@
 
 
 
-在 `path.scope.hasBinding(name)` 打个条件断点看看
-当有 console.log 时, 处理成了 "_render", 
-没有 console.log 时, 是 "render"
+在 `path.scope.hasBinding(name)` 打个条件断点看看  
+当有 console.log 时, 处理成了 "_render",  
+没有 console.log 时, 是 "render"  
 
 ![image-20200208183416549](assets/image-20200208183416549.png)
 
 整个处理过程:
-vue-loader => babel-loader => Webpack打包
-在 babel 某一个 plugin 被处理成 "_render" 
+vue-loader => babel-loader => Webpack打包  
+在 babel 某一个 plugin 被处理成 "_render"  
 
 ![image-20200208194721556](assets/image-20200208194721556.png)
 
-@babel/core/lib/transformation/index.js
-在 `transformFile` 函数里下条件断点 `file.opts.filename` 停到关注的文件
-`file.ast` 经过每个 plugin 里的 visitor 处理变形
+@babel/core/lib/transformation/index.js  
+在 `transformFile` 函数里下条件断点 `file.opts.filename` 停到关注的文件  
+`file.ast` 经过每个 plugin 里的 visitor 处理变形  
 
 ```javascript
 (0, _traverse().default)(file.ast, visitor, file.scope);
@@ -217,8 +217,8 @@ traverse.node = function (node, opts, scope, state, parentPath, skipKeys) {
 
 ## 关于命名规范
 
-根据官方风格指南, 组件名应该使用多个单词, 可以避免命名冲突的问题
-这个栗子中, 组件最好命名为 RenderFooooo, 也就不会出现这个报错了
+根据官方风格指南, 组件名应该使用多个单词, 可以避免命名冲突的问题  
+这个栗子中, 组件最好命名为 RenderFooooo, 也就不会出现这个报错了  
 
 
 
