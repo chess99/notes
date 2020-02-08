@@ -9,6 +9,7 @@ const CATALOG_FILE_NAME = 'CATALOG.md'
 function shouldFolderExcluded(folderName) {
   if (folderName.length > 1 && folderName[0] === '.') return true;
   if (folderName === 'assets') return true
+  if (folderName === 'node_modules') return true
   return false
 }
 
