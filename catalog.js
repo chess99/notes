@@ -2,7 +2,8 @@ const fs = require('fs');
 const path = require('path');
 
 console.log('process.env.CI', process.env.CI);
-const CATALOG_FILE_NAME = 'CATALOG.md'
+const CATALOG_FILE_NAME = 'README.md'
+const CATALOG_EACH_FOLDER = true
 
 ////////////////////////// 策略 //////////////////////////
 
@@ -266,20 +267,25 @@ fs.writeFileSync('.temp/treeData.json', JSON.stringify(treeResult.treeData, null
 fs.writeFileSync('.temp/folderList.json', JSON.stringify(treeResult.folderList, null, 2))
 fs.writeFileSync('.temp/plainTextResult.txt', treeResult.plainTextResult)
 
-const { folderList } = treeResult
-for (let folerNode of folderList) {
-  // 根目录下的CATALOG.md单独生成
-  if (folerNode.fileCnt && folerNode.folderFullPath !== '.') {
-    catalogEachFolder(folerNode)
+// 在除了根路径的每个文件夹下创建目录
+if (CATALOG_EACH_FOLDER) {
+  const { folderList } = treeResult
+  for (let folerNode of folderList) {
+    if (folerNode.fileCnt && folerNode.folderFullPath !== '.') {
+      catalogEachFolder(folerNode)
+    }
   }
 }
 
+// 在根路径下创建目录
 const catalogLines = getCatalogTotalLines(treeResult.treeData)
 console.log(`generating: ${CATALOG_FILE_NAME}`);
 fs.writeFileSync(CATALOG_FILE_NAME, catalogLines.join('\n'))
 console.log('concat Readme');
 concatReadme(catalogLines)
 
+// 发布github pages时, 需要把文件移动到一个子文件夹
+// 环境变量 process.env.CI 在 .github/workflows/ 下的 actions 配置中添加
 if (process.env.CI) moveFileToDeployFolder()
 
 console.log('done');
