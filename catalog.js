@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const readline = require('readline');
 
 console.log('process.env.CI', process.env.CI);
 const CATALOG_FILE_NAME = 'README.md'
@@ -14,7 +15,8 @@ function shouldFolderExcluded(folderName) {
   return false
 }
 
-function shouldFileExcluded(fileName) {
+function shouldFileExcluded(itemFullPath) {
+  const fileName = path.basename(itemFullPath)
   const excludeFileNames = [
     CATALOG_FILE_NAME,
     '_README.md',
@@ -22,7 +24,22 @@ function shouldFileExcluded(fileName) {
   if (fileName.length > 1 && fileName[0] === '.') return true; // 跳过 . 开头的文件
   if (path.extname(fileName) !== '.md') return true; // 跳过不是扩展不是 .md 的文件
   if (excludeFileNames.find(x => x === fileName)) return true; // 跳过 excludeFileNames 列表中的文件
+  if (isFileContainIgnoreComment(itemFullPath)) return true; // 注释排除 "catalog ignore"
   return false
+}
+
+function isFileContainIgnoreComment(itemFullPath) {
+  let fd = 0
+  try {
+    fd = fs.openSync(itemFullPath, 'r')
+    const buffer = Buffer.alloc(100);
+    fs.readSync(fd, buffer, 0, 100, 0)
+    const firstLine = buffer.toString('utf8').split('\n')[0]
+    // console.log('firstLine', firstLine);
+    return firstLine.indexOf('catalog ignore') !== -1
+  } finally {
+    if (fd) fs.closeSync(fd)
+  }
 }
 
 ////////////////////////// utils //////////////////////////
@@ -73,7 +90,7 @@ function parseFolder(rootPath) {
     }
 
     if (stat.isFile()) {
-      if (!shouldFileExcluded(path.basename(itemFullPath))) {
+      if (!shouldFileExcluded(itemFullPath)) {
         currLevelFiles.push(itemFullPath)
       }
     }
