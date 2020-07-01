@@ -1,8 +1,15 @@
 # 笔记
 
+## emmm 改用语雀了
+
+<https://www.yuque.com/chess99/notes>  
+
+用markdown不是非常顺手, 没有用word时随时随手记笔记的感觉  
+语雀出了个[桌面版](https://www.yuque.com/yuque/yuque-desktop)后, "随手记"的体验还行, 虽然还比不上word, 暂时用着看..
+
+
 ## 说明
 
-准备把积累的一大堆word笔记整理发布出来, 主要是大前端相关的内容  
 如发现任何错误或疏漏, 欢迎提issue指出  
 
 全文搜索可以用Github自带的搜索功能. 快捷键 `/`  
