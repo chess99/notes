@@ -10,7 +10,7 @@ const CATALOG_EACH_FOLDER = true
 
 function shouldFolderExcluded(folderName) {
   if (folderName.length > 1 && folderName[0] === '.') return true;
-  if (folderName === 'assets') return true
+  if (/assets$/i.test(folderName)) return true
   if (folderName === 'node_modules') return true
   return false
 }
@@ -22,7 +22,7 @@ function shouldFileExcluded(itemFullPath) {
     '_README.md',
   ]
   if (fileName.length > 1 && fileName[0] === '.') return true; // 跳过 . 开头的文件
-  if (path.extname(fileName) !== '.md') return true; // 跳过不是扩展不是 .md 的文件
+  if (path.extname(fileName) !== '.md' && !/\.(?:png|jpg|gif)$/i.test(fileName)) return true; // 跳过不是扩展不是 .md 的文件
   if (excludeFileNames.find(x => x === fileName)) return true; // 跳过 excludeFileNames 列表中的文件
   if (isFileContainIgnoreComment(itemFullPath)) return true; // 注释排除 "catalog ignore"
   return false
@@ -225,7 +225,10 @@ function catalogEachFolder(folderNode) {
 }
 
 function concatReadme(catalogLines) {
-  const _README = fs.readFileSync('./_README.md', { encoding: 'utf8' })
+  const RAW_README_FILE = './_README.md'
+  let _README = fs.existsSync(RAW_README_FILE)
+    ? fs.readFileSync(RAW_README_FILE, { encoding: 'utf8' })
+    : ''
   let README = _README + '\n' + catalogLines.join('\n')
   fs.writeFileSync('./README.md', README)
 }
